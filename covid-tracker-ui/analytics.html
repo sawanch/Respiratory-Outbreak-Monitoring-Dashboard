@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Observability & Analytics Dashboard - MongoDB Analytics for COVID-19 Tracker API">
+    <title>Observability & Analytics Dashboard</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Google Fonts - Roboto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Highcharts -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-dark shadow-sm py-3" style="background-color: #1e3a5f;">
+        <div class="container-fluid px-4">
+            <span class="navbar-brand mb-0 h1" style="font-weight: 600;">
+                Observability & Analytics Dashboard
+            </span>
+            <div class="d-flex align-items-center gap-2">
+                <a href="index.html" class="btn btn-outline-light professional-btn" style="min-width: 180px;">
+                    <i class="bi bi-virus"></i> COVID-19 Dashboard
+                </a>
+                <button class="btn btn-outline-light professional-btn" onclick="refreshAnalytics()" title="Refresh Analytics Data" style="min-width: 180px;">
+                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                </button>
+                <a id="swagger-link-analytics" href="#" target="_blank" class="btn btn-outline-light professional-btn" style="min-width: 180px;" title="API Documentation">
+                    <i class="bi bi-file-code"></i> API Docs
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container-fluid py-4">
+        
+        <!-- Alert Section for Errors -->
+        <div id="error-alert" class="alert alert-danger alert-dismissible fade" role="alert" style="display: none;">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span id="error-message"></span>
+            <button type="button" class="btn-close" onclick="closeErrorAlert()"></button>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loading" class="text-center my-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading analytics data...</p>
+        </div>
+
+        <!-- Analytics Content -->
+        <div id="analytics-content" style="display: none;">
+            
+            <!-- Summary Section -->
+            <section id="summary-section" class="mb-4">
+                <!-- Section Header with Last Updated -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="section-title">
+                        Analytics Summary
+                    </h2>
+                    <span id="last-updated">Last Updated: --</span>
+                </div>
+                
+                <!-- Key Metrics Row -->
+                <div class="row g-3 mb-5">
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="stat-card card border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="card-subtitle mb-2 text-muted">Total Requests</h6>
+                                        <h3 class="card-title mb-0" id="total-requests" style="color: #d97706;">--</h3>
+                                    </div>
+                                    <div class="stat-icon" style="background-color: rgba(217, 119, 6, 0.1);">
+                                        <i class="bi bi-graph-up" style="color: #d97706;"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Grid - 3 Charts in One Row -->
+                <div class="row g-3">
+                    <!-- Request Counts Chart -->
+                    <div class="col-12 col-lg-4">
+                        <div class="card border-0 shadow-md h-100">
+                            <div class="card-header bg-primary text-white py-3">
+                                <h5 class="mb-0"><i class="bi bi-bar-chart"></i> Request Counts by Endpoint</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <div id="endpoint-stats-chart" style="height: 300px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Response Time Chart -->
+                    <div class="col-12 col-lg-4">
+                        <div class="card border-0 shadow-md h-100">
+                            <div class="card-header text-white py-3" style="background-color: #f5576c;">
+                                <h5 class="mb-0"><i class="bi bi-speedometer2"></i> Average Response Times</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <div id="response-time-chart" style="height: 300px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Success/Error Chart -->
+                    <div class="col-12 col-lg-4">
+                        <div class="card border-0 shadow-md h-100">
+                            <div class="card-header bg-success text-white py-3">
+                                <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Success/Error Rates</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <div id="success-error-chart" style="height: 300px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Timeline Section -->
+            <section id="timeline-section" class="mt-5">
+                <h5 class="mb-4">
+                    <i class="bi bi-clock-history"></i> Request Timeline (Last 100 Requests)
+                </h5>
+                
+                <div class="card border-0 shadow-md">
+                    <div class="card-header bg-dark text-white py-3">
+                        <h6 class="mb-0"><i class="bi bi-list-ul"></i> Recent API Requests</h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col" style="width: 50px;" class="text-muted">#</th>
+                                        <th scope="col" class="sortable" onclick="sortTimelineTable(1)">
+                                            Timestamp <i class="bi bi-chevron-expand"></i>
+                                        </th>
+                                        <th scope="col" class="sortable" onclick="sortTimelineTable(2)">
+                                            Endpoint <i class="bi bi-chevron-expand"></i>
+                                        </th>
+                                        <th scope="col" class="sortable" onclick="sortTimelineTable(3)">
+                                            Method <i class="bi bi-chevron-expand"></i>
+                                        </th>
+                                        <th scope="col" class="sortable text-end" onclick="sortTimelineTable(4)">
+                                            Status Code <i class="bi bi-chevron-expand"></i>
+                                        </th>
+                                        <th scope="col" class="sortable text-end" onclick="sortTimelineTable(5)">
+                                            Response Time (ms) <i class="bi bi-chevron-expand"></i>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="timeline-body">
+                                    <!-- Data will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-light text-center py-3 mt-5">
+        <div class="container">
+            <p class="text-muted mb-0">
+                <small>Observability & Analytics Dashboard &copy; 2026 | MongoDB Analytics | Hybrid Database Architecture</small>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Configuration (must load first) -->
+    <script src="js/config.js"></script>
+    
+    <!-- Set Swagger URL from config -->
+    <script>
+        document.getElementById('swagger-link-analytics').href = CONFIG.SWAGGER_UI_URL;
+    </script>
+    
+    <!-- Custom JavaScript -->
+    <script src="js/analytics.js"></script>
+</body>
+</html>
+
