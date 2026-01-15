@@ -135,6 +135,7 @@ async function fetchCountriesData() {
         const data = await response.json();
         countriesData = data;
         renderCountriesTable(countriesData);
+        populateCountryDropdown(countriesData);
         
         // Hide loading, show table
         loadingDiv.style.display = 'none';
@@ -184,6 +185,30 @@ function renderCountriesTable(countries) {
         `;
         
         tbody.appendChild(row);
+    });
+}
+
+/**
+ * Populate country dropdown for AI Insights
+ * @param {Array} countries - Array of country data objects
+ */
+function populateCountryDropdown(countries) {
+    const select = document.getElementById('ai-country-select');
+    
+    // Clear existing options except the first one (placeholder)
+    select.innerHTML = '<option value="">Select a country...</option>';
+    
+    // Sort countries alphabetically
+    const sortedCountries = [...countries].sort((a, b) => 
+        a.country.localeCompare(b.country)
+    );
+    
+    // Add country options
+    sortedCountries.forEach(country => {
+        const option = document.createElement('option');
+        option.value = country.country;
+        option.textContent = country.country;
+        select.appendChild(option);
     });
 }
 
@@ -325,10 +350,11 @@ function escapeHtml(text) {
  * Get AI-powered respiratory outbreak insights for a country
  */
 async function getOutbreakInsights() {
-    const countryInput = document.getElementById('ai-country-input').value.trim();
+    const countrySelect = document.getElementById('ai-country-select');
+    const countryInput = countrySelect.value.trim();
     
     if (!countryInput) {
-        showError('Please enter a country name to get AI insights.');
+        showError('Please select a country to get AI insights.');
         return;
     }
     
