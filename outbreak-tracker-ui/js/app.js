@@ -62,7 +62,7 @@ function refreshData() {
 // ============================================
 
 /**
- * Fetch global COVID-19 statistics from API
+ * Fetch global respiratory outbreak statistics from API
  */
 async function fetchGlobalStats() {
     const loadingDiv = document.getElementById('global-loading');
@@ -115,7 +115,7 @@ function renderGlobalStats(data) {
 // ============================================
 
 /**
- * Fetch country-wise COVID-19 data from API
+ * Fetch country-wise respiratory outbreak data from API
  */
 async function fetchCountriesData() {
     const loadingDiv = document.getElementById('countries-loading');
@@ -322,9 +322,9 @@ function escapeHtml(text) {
 // ============================================
 
 /**
- * Get AI-powered COVID insights for a country
+ * Get AI-powered respiratory outbreak insights for a country
  */
-async function getCovidInsights() {
+async function getOutbreakInsights() {
     const countryInput = document.getElementById('ai-country-input').value.trim();
     
     if (!countryInput) {
@@ -359,7 +359,7 @@ async function getCovidInsights() {
         }
         
         const data = await response.json();
-        renderCovidInsights(data);
+        renderOutbreakInsights(data);
         
     } catch (error) {
         console.error('Error fetching AI insights:', error);
@@ -376,9 +376,9 @@ async function getCovidInsights() {
 
 /**
  * Render AI insights in the UI
- * @param {Object} data - COVID insights data from API
+ * @param {Object} data - Respiratory outbreak insights data from API
  */
-function renderCovidInsights(data) {
+function renderOutbreakInsights(data) {
     const container = document.getElementById('ai-insights-container');
     
     // Build main info card
@@ -445,4 +445,4 @@ function renderCovidInsights(data) {
 // ============================================
 
 // Uncomment if you need to test these functions
-// module.exports = { formatNumber, escapeHtml, sortTable, getCovidInsights, renderCovidInsights };
+// module.exports = { formatNumber, escapeHtml, sortTable, getOutbreakInsights, renderOutbreakInsights };

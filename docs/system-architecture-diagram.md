@@ -122,7 +122,7 @@
 │  │  Johns Hopkins CSSE COVID-19 Dataset (GitHub)                   │   │
 │  │              │                                                   │   │
 │  │              ▼                                                   │   │
-│  │    download_covid_data.sh (Shell Script)                        │   │
+│  │    download_data.sh (Shell Script)                               │   │
 │  │              │                                                   │   │
 │  │              ▼                                                   │   │
 │  │    CSV Files (time_series_covid19_confirmed_global.csv)         │   │

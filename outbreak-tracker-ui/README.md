@@ -34,7 +34,7 @@ The frontend follows a client-side architecture pattern:
                    │ HTTP/REST
                    ▼
 ┌─────────────────────────────────────────────────────┐
-│  Backend API (covid-tracker-api)                    │
+│  Backend API (outbreak-tracker-api)                 │
 │  • RESTful endpoints for data retrieval             │
 └─────────────────────────────────────────────────────┘
 ```
@@ -69,7 +69,7 @@ The frontend follows a client-side architecture pattern:
 The frontend requires the backend API to be running. Start it first:
 
 ```bash
-cd ../covid-tracker-api
+cd ../outbreak-tracker-api
 mvn spring-boot:run
 ```
 

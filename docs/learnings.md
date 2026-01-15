@@ -115,8 +115,8 @@ The following tables map each skill from your resume to its usage in this projec
 
 | Skill | Example | Location |
 |:------|:-------|:--------|
-| **Bash scripting** | Automation scripts, variables, conditionals | `scripts/download_covid_data.sh` (lines 1–84) |
-| **Cron jobs** | Scheduled tasks | `scripts/download_covid_data.sh` (line 15) |
+| **Bash scripting** | Automation scripts, variables, conditionals | `scripts/download_data.sh` (lines 1–84) |
+| **Cron jobs** | Scheduled tasks | `scripts/download_data.sh` (line 15) |
 
 ### Data & ETL
 
