@@ -16,6 +16,7 @@ public class CovidInsightsResponse {
     private Long activeCases;
     private String overallAssessment;
     private List<InsightCard> recommendations;
+    private List<PrecautionGroup> targetedPrecautions;
     private String generatedAt;
     
     public CovidInsightsResponse() {
@@ -86,6 +87,14 @@ public class CovidInsightsResponse {
         this.recommendations = recommendations;
     }
     
+    public List<PrecautionGroup> getTargetedPrecautions() {
+        return targetedPrecautions;
+    }
+    
+    public void setTargetedPrecautions(List<PrecautionGroup> targetedPrecautions) {
+        this.targetedPrecautions = targetedPrecautions;
+    }
+    
     public String getGeneratedAt() {
         return generatedAt;
     }
@@ -105,6 +114,7 @@ public class CovidInsightsResponse {
                 ", activeCases=" + activeCases +
                 ", overallAssessment='" + overallAssessment + '\'' +
                 ", recommendations=" + recommendations +
+                ", targetedPrecautions=" + targetedPrecautions +
                 ", generatedAt='" + generatedAt + '\'' +
                 '}';
     }

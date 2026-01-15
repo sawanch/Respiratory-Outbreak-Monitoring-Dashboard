@@ -1,7 +1,7 @@
 package com.outbreaktracker.api.aiinsights.service.impl;
 
 import com.outbreaktracker.api.aiinsights.model.CovidInsightsResponse;
-import com.outbreaktracker.api.aiinsights.model.InsightCard;
+import com.outbreaktracker.api.aiinsights.model.PrecautionGroup;
 import com.outbreaktracker.api.aiinsights.service.AiInsightsService;
 import com.outbreaktracker.api.outbreak.model.CovidData;
 import com.outbreaktracker.api.outbreak.service.CovidDataService;
@@ -17,25 +17,28 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Service implementation for AI insights operations
  * Integrates with OpenAI API to generate intelligent outbreak analysis
  * 
- * Approach: Fetches outbreak data, builds AI prompts, and processes responses
- * Falls back to rule-based recommendations if AI is unavailable
+ * Approach: Fetches outbreak data, builds AI prompts, and generates contextual assessments
+ * Falls back to rule-based assessment if AI is unavailable
  */
 @Service
 public class AiInsightsServiceImpl implements AiInsightsService {
 
     private static final Logger logger = LoggerFactory.getLogger(AiInsightsServiceImpl.class);
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private final CovidDataService covidDataService;
     private final WebClient webClient;
     private final String model;
     private final boolean aiEnabled;
-    private final ObjectMapper objectMapper;
 
     public AiInsightsServiceImpl(CovidDataService covidDataService,
                                  @Value("${openai.api.key:}") String apiKey,
@@ -44,7 +47,6 @@ public class AiInsightsServiceImpl implements AiInsightsService {
         this.covidDataService = covidDataService;
         this.model = model;
         this.aiEnabled = enabled && apiKey != null && !apiKey.trim().isEmpty();
-        this.objectMapper = new ObjectMapper();
 
         if (this.aiEnabled) {
             this.webClient = WebClient.builder()
@@ -61,7 +63,7 @@ public class AiInsightsServiceImpl implements AiInsightsService {
     
     /**
      * Generates AI-powered insights for a specific country
-     * Fetches country data, calls OpenAI API, and builds intelligent recommendations
+     * Fetches country data, calls OpenAI API, and generates contextual assessment
      */
     @Override
     public CovidInsightsResponse getCountryInsights(String countryName) {
@@ -94,7 +96,6 @@ public class AiInsightsServiceImpl implements AiInsightsService {
         }
 
         response.setOverallAssessment(generateFallbackAssessment(countryData));
-        response.setRecommendations(generateFallbackRecommendations(countryData));
         return response;
     }
     
@@ -132,42 +133,42 @@ public class AiInsightsServiceImpl implements AiInsightsService {
         }
         
         return String.format(
-                "You are a public health expert analyzing respiratory outbreak data. Provide a VARIED and NATURAL assessment.\n\n" +
+                "You are a public health expert analyzing respiratory outbreak data.\n\n" +
                 "Country: %s\n" +
                 "Total Cases: %,d\n" +
                 "New Cases Today: %,d (%s)\n" +
                 "Total Deaths: %,d (%.1f%% mortality)\n" +
                 "Active Cases: %,d (%.1f%% of total)\n\n" +
-                "IMPORTANT INSTRUCTIONS:\n" +
-                "- Use DIFFERENT language patterns for each country\n" +
-                "- Focus on DIFFERENT aspects: some on trends, some on active cases, some on regional context\n" +
-                "- DO NOT mention recovery rates or percentages unless specifically notable\n" +
-                "- Vary your tone: optimistic for low numbers, cautious for moderate, urgent for high\n" +
-                "- Keep assessments concise and natural (2-3 sentences)\n" +
-                "- Make each response feel unique and tailored\n\n" +
-                "Provide a JSON response with:\n" +
-                "1. overallAssessment: A natural 2-3 sentence analysis focusing on:\n" +
-                "   - Current situation (use varied descriptors: stable/concerning/improving/challenging)\n" +
-                "   - Key metric that stands out (deaths, active cases, OR new cases - pick ONE)\n" +
-                "   - Context-appropriate advice or observation\n\n" +
-                "2. recommendations: An array of 2-3 diverse insight cards:\n" +
-                "   - Mix different topics: prevention, trends, testing, vaccination, community spread\n" +
-                "   - Use varied language for similar concepts\n" +
-                "   - Avoid repetitive patterns across recommendations\n\n" +
-                "Format each recommendation:\n" +
-                "{\n" +
-                "  \"icon\": \"single emoji (vary these: 😷🏥💉📊⚠️✅🔍📈📉)\",\n" +
-                "  \"title\": \"Unique title (max 6 words, avoid repetition)\",\n" +
-                "  \"description\": \"Specific, actionable advice (1-2 sentences)\",\n" +
-                "  \"severity\": \"info|warning|success\" (based on active case rate: <5%%=success, 5-15%%=info, >15%%=warning)\n" +
-                "}\n\n" +
-                "Return ONLY valid JSON:\n" +
-                "{\n" +
-                "  \"overallAssessment\": \"your unique assessment\",\n" +
-                "  \"recommendations\": [\n" +
-                "    {\"icon\": \"😷\", \"title\": \"...\", \"description\": \"...\", \"severity\": \"...\"}\n" +
-                "  ]\n" +
-                "}",
+                "Provide TWO sections:\n\n" +
+                "1. ASSESSMENT (EXACTLY 2 sentences):\n" +
+                "   - Reference SPECIFIC numbers from the data\n" +
+                "   - Analyze current situation focusing on key metrics\n" +
+                "   - Keep it concise, natural and data-driven\n" +
+                "   - IMPORTANT: Must be EXACTLY 2 sentences, no more\n\n" +
+                "2. TARGETED_PRECAUTIONS (JSON array):\n" +
+                "   Generate EXACTLY 3 demographic-specific precaution groups.\n" +
+                "   Focus on: Athletes/Sports Personnel, Elderly (65+), Students/Schools.\n" +
+                "   DO NOT include Healthcare Workers.\n" +
+                "   Each group should have:\n" +
+                "   - 'group': emoji + demographic name (e.g., '🏃 Athletes & Sports Personnel')\n" +
+                "   - 'tips': array of EXACTLY 2 concise, actionable bullet points\n\n" +
+                "Format:\n" +
+                "ASSESSMENT:\n" +
+                "Your EXACTLY 2 sentence analysis here.\n\n" +
+                "TARGETED_PRECAUTIONS:\n" +
+                "[\n" +
+                "  {\n" +
+                "    \"group\": \"🏃 Athletes & Sports Personnel\",\n" +
+                "    \"tips\": [\n" +
+                "      \"Limit indoor training to small groups with proper ventilation\",\n" +
+                "      \"Require testing before competitions and team events\"\n" +
+                "    ]\n" +
+                "  }\n" +
+                "]\n\n" +
+                "IMPORTANT: \n" +
+                "- Generate EXACTLY 3 groups (Athletes, Elderly, Students) - NO Healthcare Workers\n" +
+                "- Each group must have EXACTLY 2 tips, no more, no less\n" +
+                "- Make tips specific, actionable, and relevant to the current case levels",
                 data.getCountry(),
                 data.getTotalCases() != null ? data.getTotalCases() : 0,
                 data.getNewCases() != null ? data.getNewCases() : 0,
@@ -187,11 +188,11 @@ public class AiInsightsServiceImpl implements AiInsightsService {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("model", model);
         requestBody.put("temperature", temperature);
-        requestBody.put("max_tokens", 600);
+        requestBody.put("max_tokens", 800);
         
         Map<String, String> systemMessage = new HashMap<>();
         systemMessage.put("role", "system");
-        systemMessage.put("content", "You are a public health expert providing respiratory outbreak insights. Always respond with valid JSON.");
+        systemMessage.put("content", "You are a public health expert providing respiratory outbreak insights. Provide clear, data-driven assessments in plain text.");
         
         Map<String, String> userMessage = new HashMap<>();
         userMessage.put("role", "user");
@@ -220,49 +221,66 @@ public class AiInsightsServiceImpl implements AiInsightsService {
     }
     
     /**
-     * Parses AI response JSON and populates insights response object
-     * Handles markdown code fences and extracts structured data
+     * Parses AI response and populates insights response object
+     * Extracts assessment text and targeted precautions JSON
      */
     private void parseInsightsResponse(String aiResponse, CovidInsightsResponse response) {
         try {
-            // Clean response - remove markdown code fences if present
-            String cleanJson = aiResponse;
-            if (cleanJson.startsWith("```json")) {
-                cleanJson = cleanJson.substring(7);
-            } else if (cleanJson.startsWith("```")) {
-                cleanJson = cleanJson.substring(3);
-            }
-            if (cleanJson.endsWith("```")) {
-                cleanJson = cleanJson.substring(0, cleanJson.length() - 3);
-            }
-            cleanJson = cleanJson.trim();
+            // Split response into assessment and precautions sections
+            String assessment = "";
+            List<PrecautionGroup> precautions = new ArrayList<>();
             
-            JsonNode rootNode = objectMapper.readTree(cleanJson);
-            
-            // Parse overall assessment
-            if (rootNode.has("overallAssessment")) {
-                response.setOverallAssessment(rootNode.get("overallAssessment").asText());
-            }
-            
-            // Parse recommendations
-            if (rootNode.has("recommendations")) {
-                List<InsightCard> cards = new ArrayList<>();
-                JsonNode recsNode = rootNode.get("recommendations");
+            // Look for ASSESSMENT: and TARGETED_PRECAUTIONS: markers
+            if (aiResponse.contains("ASSESSMENT:") && aiResponse.contains("TARGETED_PRECAUTIONS:")) {
+                String[] parts = aiResponse.split("TARGETED_PRECAUTIONS:");
                 
-                for (JsonNode recNode : recsNode) {
-                    InsightCard card = new InsightCard();
-                    card.setIcon(recNode.get("icon").asText());
-                    card.setTitle(recNode.get("title").asText());
-                    card.setDescription(recNode.get("description").asText());
-                    card.setSeverity(recNode.get("severity").asText());
-                    cards.add(card);
+                // Extract assessment
+                String assessmentPart = parts[0].replace("ASSESSMENT:", "").trim();
+                assessment = assessmentPart;
+                
+                // Extract and parse precautions JSON
+                if (parts.length > 1) {
+                    String precautionsJson = parts[1].trim();
+                    
+                    // Clean up markdown code fences if present
+                    if (precautionsJson.startsWith("```json")) {
+                        precautionsJson = precautionsJson.substring(7);
+                    } else if (precautionsJson.startsWith("```")) {
+                        precautionsJson = precautionsJson.substring(3);
+                    }
+                    if (precautionsJson.endsWith("```")) {
+                        precautionsJson = precautionsJson.substring(0, precautionsJson.length() - 3);
+                    }
+                    precautionsJson = precautionsJson.trim();
+                    
+                    // Parse JSON array
+                    JsonNode precautionsArray = objectMapper.readTree(precautionsJson);
+                    for (JsonNode precautionNode : precautionsArray) {
+                        PrecautionGroup group = new PrecautionGroup();
+                        group.setGroup(precautionNode.get("group").asText());
+                        
+                        List<String> tips = new ArrayList<>();
+                        JsonNode tipsNode = precautionNode.get("tips");
+                        for (JsonNode tipNode : tipsNode) {
+                            tips.add(tipNode.asText());
+                        }
+                        group.setTips(tips);
+                        precautions.add(group);
+                    }
                 }
-                
-                response.setRecommendations(cards);
+            } else {
+                // Fallback: use entire response as assessment
+                assessment = aiResponse.trim();
             }
+            
+            response.setOverallAssessment(assessment);
+            response.setTargetedPrecautions(precautions);
+            
         } catch (Exception e) {
             logger.error("Failed to parse AI response: {}", e.getMessage());
-            throw new RuntimeException("Failed to parse AI insights", e);
+            // Set fallback assessment
+            response.setOverallAssessment(aiResponse.trim());
+            response.setTargetedPrecautions(new ArrayList<>());
         }
     }
     
@@ -289,49 +307,5 @@ public class AiInsightsServiceImpl implements AiInsightsService {
                     "Continue to follow local health guidelines and maintain recommended safety measures.",
                     countryName, totalCases);
         }
-    }
-    
-    /**
-     * Generates rule-based recommendations when AI is unavailable
-     * Returns predefined safety cards based on case trends
-     */
-    private List<InsightCard> generateFallbackRecommendations(CovidData data) {
-        List<InsightCard> cards = new ArrayList<>();
-        
-        // Safety precautions card
-        cards.add(new InsightCard(
-                "😷",
-                "Safety Precautions",
-                "Wear masks in crowded indoor spaces, practice good hand hygiene, and maintain social distancing when possible. Stay up to date with vaccinations and boosters.",
-                "info"
-        ));
-        
-        // Trend analysis card
-        Long newCases = data.getNewCases();
-        if (newCases != null && newCases > 1000) {
-            cards.add(new InsightCard(
-                    "📈",
-                    "Rising Cases",
-                    String.format("New cases reported: %,d. Consider reducing non-essential activities and avoiding large gatherings to minimize exposure risk.", newCases),
-                    "warning"
-            ));
-        } else {
-            cards.add(new InsightCard(
-                    "📊",
-                    "Current Trend",
-                    "Cases appear stable. Continue following recommended health protocols and monitor local updates for any changes in the situation.",
-                    "info"
-            ));
-        }
-        
-        // Health advisory card
-        cards.add(new InsightCard(
-                "🏥",
-                "Health Advisory",
-                "Seek medical attention if you experience symptoms. Get tested if exposed or symptomatic. Vulnerable populations should take extra precautions.",
-                "info"
-        ));
-        
-        return cards;
     }
 }

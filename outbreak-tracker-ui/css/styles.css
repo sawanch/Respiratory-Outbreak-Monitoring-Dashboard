@@ -448,10 +448,44 @@ footer {
 }
 
 .insight-main-card .assessment-text {
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     line-height: 1.6;
     margin-top: 1rem;
     opacity: 0.95;
+}
+
+.insight-main-card .assessment-section h5 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.insight-main-card .recommendations-list {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 1rem;
+}
+
+.insight-main-card .recommendations-list li {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    padding: 0.75rem 0 0.75rem 2rem;
+    position: relative;
+    opacity: 0.95;
+}
+
+.insight-main-card .recommendations-list li:before {
+    content: "→";
+    position: absolute;
+    left: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.insight-main-card .recommendations-list li strong {
+    font-weight: 600;
+    opacity: 1;
 }
 
 /* AI Metadata Footer */
@@ -482,6 +516,100 @@ footer {
 .ai-metadata-details strong {
     font-weight: 600;
     color: #ffffff;
+}
+
+/* Metric Cards (Left Column) */
+.metric-card {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.12);
+    padding: 16px;
+    border-radius: 8px;
+    border-left: 4px solid rgba(255, 255, 255, 0.6);
+}
+
+.metric-icon {
+    font-size: 2.5rem;
+    margin-right: 16px;
+    min-width: 50px;
+    text-align: center;
+}
+
+.metric-content {
+    flex: 1;
+}
+
+.metric-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.metric-value {
+    font-size: 1.85rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    line-height: 1.2;
+}
+
+.metric-subtext {
+    font-size: 0.85rem;
+    opacity: 0.85;
+}
+
+/* Assessment Section */
+.assessment-section {
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+}
+
+.assessment-text-content {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 0;
+    opacity: 0.95;
+}
+
+/* Precautions Header */
+.precautions-header {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #ffffff;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Precaution Cards (Right Column) */
+.precaution-card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 18px 22px;
+    border-radius: 10px;
+    border-left: 3px solid rgba(255, 255, 255, 0.5);
+}
+
+.precaution-card-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #ffffff;
+}
+
+.precaution-card-list {
+    margin: 0;
+    padding-left: 24px;
+    font-size: 1.05rem;
+    line-height: 1.8;
+}
+
+.precaution-card-list li {
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.precaution-card-list li:last-child {
+    margin-bottom: 0;
 }
 
 /* Loading spinner for AI insights */

@@ -21,6 +21,8 @@ function formatEndpoint(ep) {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('[Analytics] Dashboard initialized');
     loadAnalytics();
+    // Auto-load AI insights
+    getSystemInsights();
 });
 
 // Load analytics data
@@ -98,10 +100,10 @@ function createEndpointStatsChart(endpointStats) {
 
 // Create response time chart
 function createResponseTimeChart(responseTimeStats) {
-    // Sort by response time (descending) and take top 7 slowest endpoints
+    // Sort by response time (descending) and take top 5 slowest endpoints
     const sortedEntries = Object.entries(responseTimeStats)
         .sort(([, a], [, b]) => b - a)
-        .slice(0, 7);
+        .slice(0, 5);
     
     const endpoints = sortedEntries.map(([ep]) => formatEndpoint(ep));
     const times = sortedEntries.map(([, time]) => Math.round(time * 100) / 100);
@@ -327,4 +329,118 @@ function updateLastUpdated() {
     if (lastUpdatedElement) {
         lastUpdatedElement.textContent = `Last Updated: ${formattedDate}`;
     }
+}
+
+// ============================================
+// AI System Insights Functions
+// ============================================
+
+/**
+ * Get AI-powered system insights
+ */
+async function getSystemInsights() {
+    const container = document.getElementById('ai-insights-container');
+    
+    // Show loading state
+    container.innerHTML = `
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body ai-loading">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="ai-loading-text">Analyzing system performance with AI...</p>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    try {
+        const response = await fetch(`${CONFIG.API_BASE_URL}/analytics/ai-insights`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        renderSystemInsights(data);
+        
+    } catch (error) {
+        console.error('Error fetching AI insights:', error);
+        container.innerHTML = `
+            <div class="col-12">
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    Failed to load AI insights. ${error.message}
+                </div>
+            </div>
+        `;
+    }
+}
+
+/**
+ * Render AI system insights in the UI
+ * @param {Object} data - System insights data from API
+ */
+function renderSystemInsights(data) {
+    const container = document.getElementById('ai-insights-container');
+    
+    // Build recommendations as bullet points
+    let recommendationsBullets = '';
+    data.recommendations.forEach(rec => {
+        recommendationsBullets += `<li><strong>${escapeHtml(rec.title)}:</strong> ${escapeHtml(rec.description)}</li>`;
+    });
+    
+    // Build single consolidated card with all information
+    let html = `
+        <div class="col-12">
+            <div class="insight-main-card">
+                <h3><i class="bi bi-cpu-fill"></i> System Performance Analysis</h3>
+                
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-label">Total Requests</div>
+                        <div class="stat-value">${formatNumber(data.totalRequests)}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Avg Response Time</div>
+                        <div class="stat-value">${data.avgResponseTime.toFixed(1)} ms</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Error Rate</div>
+                        <div class="stat-value">${data.errorRate.toFixed(2)}%</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Slowest Endpoint</div>
+                        <div class="stat-value" style="font-size: 1.2rem;">${escapeHtml(data.slowestEndpoint)}</div>
+                    </div>
+                </div>
+                
+                <div class="assessment-section">
+                    <h4><i class="bi bi-lightbulb-fill"></i> AI Assessment:</h4>
+                    <p class="assessment-text">${escapeHtml(data.overallAssessment)}</p>
+                    
+                    <h5 class="mt-4"><i class="bi bi-list-check"></i> Key Recommendations:</h5>
+                    <ul class="recommendations-list">
+                        ${recommendationsBullets}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
+// Helper function to format numbers with commas
+function formatNumber(num) {
+    if (num === null || num === undefined) return '0';
+    return num.toLocaleString('en-US');
+}
+
+// Helper function to escape HTML (prevent XSS)
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }

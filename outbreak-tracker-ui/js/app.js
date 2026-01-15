@@ -405,72 +405,89 @@ async function getOutbreakInsights() {
 }
 
 /**
- * Render AI insights in the UI
+ * Render AI insights in the UI with 2-column layout
  * @param {Object} data - Respiratory outbreak insights data from API
  */
 function renderOutbreakInsights(data) {
     const container = document.getElementById('ai-insights-container');
     
-    // Build main info card
+    // Calculate percentages
+    const activeCasePercent = data.totalCases > 0 
+        ? ((data.activeCases / data.totalCases) * 100).toFixed(1) 
+        : '0.0';
+    const dailyIncreasePercent = data.totalCases > 0 
+        ? ((data.newCases / data.totalCases) * 100).toFixed(3) 
+        : '0.0';
+    
+    // Build targeted precautions HTML (with cards)
+    let precautionsHTML = '';
+    if (data.targetedPrecautions && data.targetedPrecautions.length > 0) {
+        precautionsHTML = data.targetedPrecautions.map(group => `
+            <div class="precaution-card mb-3">
+                <h6 class="precaution-card-title">${escapeHtml(group.group)}</h6>
+                <ul class="precaution-card-list">
+                    ${group.tips.map(tip => `<li>${escapeHtml(tip)}</li>`).join('')}
+                </ul>
+            </div>
+        `).join('');
+    }
+    
+    // Build main info card with 2-column layout
     let html = `
         <div class="col-12">
             <div class="insight-main-card">
-                <h3><i class="bi bi-geo-alt-fill"></i> ${escapeHtml(data.country)}</h3>
+                <h3><i class="bi bi-geo-alt-fill"></i> ${escapeHtml(data.country)} - AI-Powered Analysis</h3>
                 
-                <div class="stats-row">
-                    <div class="stat-item">
-                        <div class="stat-label">Total Cases</div>
-                        <div class="stat-value">${formatNumber(data.totalCases)}</div>
+                <div class="row mt-4">
+                    <!-- LEFT COLUMN: Key Metrics & Assessment -->
+                    <div class="col-md-4">
+                        <!-- Active Cases Card -->
+                        <div class="metric-card">
+                            <div class="metric-icon">⚠️</div>
+                            <div class="metric-content">
+                                <div class="metric-label">Active Cases</div>
+                                <div class="metric-value">${formatNumber(data.activeCases)}</div>
+                                <div class="metric-subtext">(${activeCasePercent}% of total cases)</div>
+                            </div>
+                        </div>
+                        
+                        <!-- New Cases Card -->
+                        <div class="metric-card mt-3">
+                            <div class="metric-icon">📈</div>
+                            <div class="metric-content">
+                                <div class="metric-label">New Cases Today</div>
+                                <div class="metric-value">${formatNumber(data.newCases)}</div>
+                                <div class="metric-subtext">(${dailyIncreasePercent}% daily increase)</div>
+                            </div>
+                        </div>
+                        
+                        <!-- AI Assessment -->
+                        <div class="mt-4 assessment-section">
+                            <strong style="font-size: 1.15rem;"><i class="bi bi-lightbulb-fill"></i> AI Assessment:</strong>
+                            <p class="mt-3 assessment-text-content" style="font-size: 1.1rem; line-height: 1.8; opacity: 0.95;">${escapeHtml(data.overallAssessment)}</p>
+                        </div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-label">New Cases</div>
-                        <div class="stat-value">${formatNumber(data.newCases)}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Total Deaths</div>
-                        <div class="stat-value">${formatNumber(data.totalDeaths)}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Recovered</div>
-                        <div class="stat-value">${formatNumber(data.totalRecovered)}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Active Cases</div>
-                        <div class="stat-value">${formatNumber(data.activeCases)}</div>
+                    
+                    <!-- RIGHT COLUMN: AI Metadata & Precautions -->
+                    <div class="col-md-7 offset-md-1">
+                        <!-- AI Metadata -->
+                        <div class="ai-metadata mb-4">
+                            <div class="ai-metadata-header"><i class="bi bi-robot"></i> AI-Generated Analysis</div>
+                            <div class="ai-metadata-details"><strong>Model:</strong> GPT-4o-mini | <strong>Temperature:</strong> 0.7 | <strong>Tokens:</strong> ~800</div>
+                        </div>
+                        
+                        <h5 class="precautions-header mb-3"><i class="bi bi-shield-check"></i> Precautions</h5>
+                        ${precautionsHTML || '<p class="text-white-50">No specific precautions available.</p>'}
                     </div>
                 </div>
                 
-                <div class="assessment-text">
-                    <strong><i class="bi bi-lightbulb-fill"></i> AI Assessment:</strong><br>
-                    ${escapeHtml(data.overallAssessment)}
-                </div>
-                
-                <div class="ai-metadata">
-                    <div class="ai-metadata-header"><i class="bi bi-robot"></i> AI-Generated Analysis</div>
-                    <div class="ai-metadata-details"><strong>Model:</strong> GPT-4o-mini | <strong>Temperature:</strong> 0.7 | <strong>Tokens:</strong> ~450</div>
-                </div>
-                
-                <div class="mt-3" style="font-size: 0.85rem; opacity: 0.8;">
+                <!-- Timestamp -->
+                <div class="mt-4" style="font-size: 1.05rem; opacity: 0.85; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 14px;">
                     <i class="bi bi-clock"></i> Generated: ${escapeHtml(data.generatedAt)}
                 </div>
             </div>
         </div>
     `;
-    
-    // Build recommendation cards
-    if (data.recommendations && data.recommendations.length > 0) {
-        data.recommendations.forEach(rec => {
-            html += `
-                <div class="col-12 col-md-6 col-lg-4">
-                    <div class="insight-card ${escapeHtml(rec.severity)}">
-                        <span class="insight-card-icon">${rec.icon}</span>
-                        <h5 class="insight-card-title">${escapeHtml(rec.title)}</h5>
-                        <p class="insight-card-description">${escapeHtml(rec.description)}</p>
-                    </div>
-                </div>
-            `;
-        });
-    }
     
     container.innerHTML = html;
 }

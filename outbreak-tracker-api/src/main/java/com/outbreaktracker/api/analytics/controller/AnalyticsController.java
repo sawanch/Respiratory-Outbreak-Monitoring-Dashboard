@@ -1,6 +1,8 @@
 package com.outbreaktracker.api.analytics.controller;
 
+import com.outbreaktracker.api.analytics.model.AnalyticsInsightsResponse;
 import com.outbreaktracker.api.analytics.service.AnalyticsService;
+import com.outbreaktracker.api.analytics.service.AnalyticsAiService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +24,11 @@ public class AnalyticsController {
     private static final Logger logger = LoggerFactory.getLogger(AnalyticsController.class);
 
     private final AnalyticsService analyticsService;
+    private final AnalyticsAiService analyticsAiService;
 
-    public AnalyticsController(AnalyticsService analyticsService) {
+    public AnalyticsController(AnalyticsService analyticsService, AnalyticsAiService analyticsAiService) {
         this.analyticsService = analyticsService;
+        this.analyticsAiService = analyticsAiService;
     }
 
     /**
@@ -60,6 +64,18 @@ public class AnalyticsController {
     public ResponseEntity<List<Map<String, Object>>> getTimeline() {
         logger.info("GET /api/analytics/timeline - Fetching request timeline");
         return ResponseEntity.ok(analyticsService.getTimeline());
+    }
+
+    /**
+     * GET /api/analytics/ai-insights - Returns AI-powered system analysis
+     * Provides intelligent performance analysis and recommendations using OpenAI
+     */
+    @GetMapping("/ai-insights")
+    public ResponseEntity<AnalyticsInsightsResponse> getSystemInsights() {
+        logger.info("GET /api/analytics/ai-insights - Fetching AI system insights");
+        
+        AnalyticsInsightsResponse insights = analyticsAiService.getSystemInsights();
+        return ResponseEntity.ok(insights);
     }
 }
 
