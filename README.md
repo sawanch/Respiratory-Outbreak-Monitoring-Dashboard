@@ -1,6 +1,6 @@
-# COVID-19 Tracker
+# Respiratory Outbreak Monitoring Dashboard
 
-A full-stack web application for tracking and visualizing global COVID-19 statistics with real-time analytics and monitoring. Built with Spring Boot, MySQL, MongoDB, Redis, and JavaScript, demonstrating modern software engineering practices, API analytics tracking, and cloud deployment.
+A full-stack web application for tracking and visualizing respiratory outbreak trends across multiple diseases including COVID-19, Flu, RSV, and Pneumonia. Features early-warning trends, country stats, and AI insights. Built with Spring Boot, MySQL, MongoDB, Redis, and JavaScript, demonstrating modern software engineering practices, API analytics tracking, and cloud deployment.
 
 ## Overview
 
