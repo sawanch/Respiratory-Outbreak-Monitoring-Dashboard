@@ -1,8 +1,8 @@
-package com.outbreaktracker.api.service.impl;
+package com.outbreaktracker.api.outbreak.service.impl;
 
-import com.outbreaktracker.api.model.CovidData;
-import com.outbreaktracker.api.model.GlobalStats;
-import com.outbreaktracker.api.repository.CovidDataRepository;
+import com.outbreaktracker.api.outbreak.model.CovidData;
+import com.outbreaktracker.api.outbreak.model.GlobalStats;
+import com.outbreaktracker.api.outbreak.repository.CovidDataRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

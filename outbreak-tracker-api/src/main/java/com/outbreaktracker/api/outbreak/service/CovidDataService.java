@@ -1,7 +1,7 @@
-package com.outbreaktracker.api.service;
+package com.outbreaktracker.api.outbreak.service;
 
-import com.outbreaktracker.api.model.CovidData;
-import com.outbreaktracker.api.model.GlobalStats;
+import com.outbreaktracker.api.outbreak.model.CovidData;
+import com.outbreaktracker.api.outbreak.model.GlobalStats;
 
 import java.util.List;
 

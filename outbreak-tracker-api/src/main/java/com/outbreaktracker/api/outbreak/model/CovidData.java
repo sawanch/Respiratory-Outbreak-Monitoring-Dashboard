@@ -1,4 +1,4 @@
-package com.outbreaktracker.api.model;
+package com.outbreaktracker.api.outbreak.model;
 
 import java.util.Objects;
 

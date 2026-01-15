@@ -1,4 +1,4 @@
-package com.outbreaktracker.api.model;
+package com.outbreaktracker.api.outbreak.model;
 
 /**
  * Model representing aggregated worldwide respiratory outbreak statistics

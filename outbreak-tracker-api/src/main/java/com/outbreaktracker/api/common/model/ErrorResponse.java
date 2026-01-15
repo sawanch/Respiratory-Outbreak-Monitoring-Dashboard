@@ -1,4 +1,4 @@
-package com.outbreaktracker.api.model;
+package com.outbreaktracker.api.common.model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

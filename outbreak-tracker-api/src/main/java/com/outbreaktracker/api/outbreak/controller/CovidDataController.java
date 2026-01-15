@@ -1,8 +1,8 @@
-package com.outbreaktracker.api.controller;
+package com.outbreaktracker.api.outbreak.controller;
 
-import com.outbreaktracker.api.model.CovidData;
-import com.outbreaktracker.api.model.GlobalStats;
-import com.outbreaktracker.api.service.CovidDataService;
+import com.outbreaktracker.api.outbreak.model.CovidData;
+import com.outbreaktracker.api.outbreak.model.GlobalStats;
+import com.outbreaktracker.api.outbreak.service.CovidDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

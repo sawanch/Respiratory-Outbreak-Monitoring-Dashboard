@@ -1,6 +1,6 @@
-package com.outbreaktracker.api.util;
+package com.outbreaktracker.api.common.util;
 
-import com.outbreaktracker.api.model.CovidData;
+import com.outbreaktracker.api.outbreak.model.CovidData;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;

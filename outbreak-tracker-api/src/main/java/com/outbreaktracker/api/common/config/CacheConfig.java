@@ -1,4 +1,4 @@
-package com.outbreaktracker.api.config;
+package com.outbreaktracker.api.common.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.annotation.EnableCaching;

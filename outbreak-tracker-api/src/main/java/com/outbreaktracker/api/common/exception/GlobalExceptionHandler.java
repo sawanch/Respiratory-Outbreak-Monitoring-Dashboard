@@ -1,6 +1,6 @@
-package com.outbreaktracker.api.exception;
+package com.outbreaktracker.api.common.exception;
 
-import com.outbreaktracker.api.model.ErrorResponse;
+import com.outbreaktracker.api.common.model.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

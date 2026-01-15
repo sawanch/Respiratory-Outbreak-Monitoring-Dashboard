@@ -1,7 +1,7 @@
-package com.outbreaktracker.api.repository;
+package com.outbreaktracker.api.outbreak.repository;
 
-import com.outbreaktracker.api.mapper.CovidDataRowMapper;
-import com.outbreaktracker.api.model.CovidData;
+import com.outbreaktracker.api.outbreak.mapper.CovidDataRowMapper;
+import com.outbreaktracker.api.outbreak.model.CovidData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;

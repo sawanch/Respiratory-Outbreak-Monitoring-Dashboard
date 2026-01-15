@@ -1,4 +1,4 @@
-package com.outbreaktracker.api.config;
+package com.outbreaktracker.api.common.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

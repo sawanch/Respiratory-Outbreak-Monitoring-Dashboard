@@ -1,6 +1,6 @@
-package com.outbreaktracker.api.mapper;
+package com.outbreaktracker.api.outbreak.mapper;
 
-import com.outbreaktracker.api.model.CovidData;
+import com.outbreaktracker.api.outbreak.model.CovidData;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

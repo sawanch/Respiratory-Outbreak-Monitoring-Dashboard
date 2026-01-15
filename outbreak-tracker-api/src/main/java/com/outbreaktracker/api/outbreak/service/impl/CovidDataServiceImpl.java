@@ -1,10 +1,10 @@
-package com.outbreaktracker.api.service.impl;
+package com.outbreaktracker.api.outbreak.service.impl;
 
-import com.outbreaktracker.api.model.CovidData;
-import com.outbreaktracker.api.model.GlobalStats;
-import com.outbreaktracker.api.repository.CovidDataRepository;
-import com.outbreaktracker.api.service.CovidDataService;
-import com.outbreaktracker.api.util.CsvParserUtil;
+import com.outbreaktracker.api.outbreak.model.CovidData;
+import com.outbreaktracker.api.outbreak.model.GlobalStats;
+import com.outbreaktracker.api.outbreak.repository.CovidDataRepository;
+import com.outbreaktracker.api.outbreak.service.CovidDataService;
+import com.outbreaktracker.api.common.util.CsvParserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

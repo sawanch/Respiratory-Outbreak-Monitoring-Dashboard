@@ -1,8 +1,8 @@
-package com.outbreaktracker.api.initializer;
+package com.outbreaktracker.api.outbreak.initializer;
 
-import com.outbreaktracker.api.model.CovidData;
-import com.outbreaktracker.api.repository.CovidDataRepository;
-import com.outbreaktracker.api.util.CsvParserUtil;
+import com.outbreaktracker.api.outbreak.model.CovidData;
+import com.outbreaktracker.api.outbreak.repository.CovidDataRepository;
+import com.outbreaktracker.api.common.util.CsvParserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
