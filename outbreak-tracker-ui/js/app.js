@@ -422,14 +422,15 @@ function renderOutbreakInsights(data) {
     // Build targeted precautions HTML (with cards)
     let precautionsHTML = '';
     if (data.targetedPrecautions && data.targetedPrecautions.length > 0) {
-        precautionsHTML = data.targetedPrecautions.map(group => `
-            <div class="precaution-card mb-3">
+        const precautionCards = data.targetedPrecautions.map(group => `
+            <div class="precaution-card">
                 <h6 class="precaution-card-title">${escapeHtml(group.group)}</h6>
                 <ul class="precaution-card-list">
                     ${group.tips.map(tip => `<li>${escapeHtml(tip)}</li>`).join('')}
                 </ul>
             </div>
         `).join('');
+        precautionsHTML = `<div class="precautions-container">${precautionCards}</div>`;
     }
     
     // Build main info card with 2-column layout
@@ -441,23 +442,25 @@ function renderOutbreakInsights(data) {
                 <div class="row mt-4">
                     <!-- LEFT COLUMN: Key Metrics & Assessment -->
                     <div class="col-md-4">
-                        <!-- Active Cases Card -->
-                        <div class="metric-card">
-                            <div class="metric-icon">⚠️</div>
-                            <div class="metric-content">
-                                <div class="metric-label">Active Cases</div>
-                                <div class="metric-value">${formatNumber(data.activeCases)}</div>
-                                <div class="metric-subtext">(${activeCasePercent}% of total cases)</div>
+                        <div class="metrics-container">
+                            <!-- Active Cases Card -->
+                            <div class="metric-card">
+                                <div class="metric-icon">⚠️</div>
+                                <div class="metric-content">
+                                    <div class="metric-label">Active Cases</div>
+                                    <div class="metric-value">${formatNumber(data.activeCases)}</div>
+                                    <div class="metric-subtext">(${activeCasePercent}% of total cases)</div>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <!-- New Cases Card -->
-                        <div class="metric-card mt-3">
-                            <div class="metric-icon">📈</div>
-                            <div class="metric-content">
-                                <div class="metric-label">New Cases Today</div>
-                                <div class="metric-value">${formatNumber(data.newCases)}</div>
-                                <div class="metric-subtext">(${dailyIncreasePercent}% daily increase)</div>
+                            
+                            <!-- New Cases Card -->
+                            <div class="metric-card">
+                                <div class="metric-icon">📈</div>
+                                <div class="metric-content">
+                                    <div class="metric-label">New Cases Today</div>
+                                    <div class="metric-value">${formatNumber(data.newCases)}</div>
+                                    <div class="metric-subtext">(${dailyIncreasePercent}% daily increase)</div>
+                                </div>
                             </div>
                         </div>
                         

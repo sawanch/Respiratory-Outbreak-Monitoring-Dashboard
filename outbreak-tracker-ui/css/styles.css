@@ -518,6 +518,13 @@ footer {
     color: #ffffff;
 }
 
+/* Metrics Container */
+.metrics-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
 /* Metric Cards (Left Column) */
 .metric-card {
     display: flex;
@@ -526,6 +533,7 @@ footer {
     padding: 16px;
     border-radius: 8px;
     border-left: 4px solid rgba(255, 255, 255, 0.6);
+    height: 165px;
 }
 
 .metric-icon {
@@ -581,12 +589,22 @@ footer {
     border-bottom: 2px solid rgba(255, 255, 255, 0.3);
 }
 
+/* Precaution Cards Container */
+.precautions-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
 /* Precaution Cards (Right Column) */
 .precaution-card {
     background: rgba(255, 255, 255, 0.1);
     padding: 18px 22px;
     border-radius: 10px;
     border-left: 3px solid rgba(255, 255, 255, 0.5);
+    height: 165px;
+    display: flex;
+    flex-direction: column;
 }
 
 .precaution-card-title {
@@ -594,6 +612,7 @@ footer {
     font-weight: 600;
     margin-bottom: 12px;
     color: #ffffff;
+    flex-shrink: 0;
 }
 
 .precaution-card-list {
@@ -601,6 +620,7 @@ footer {
     padding-left: 24px;
     font-size: 1.05rem;
     line-height: 1.8;
+    flex-grow: 1;
 }
 
 .precaution-card-list li {
